@@ -159,6 +159,11 @@
         .pb-a{background:#fef2f2;color:var(--red)}.pb-t{background:var(--accent-bg);color:var(--accent)}.pb-s{background:#f0fdf4;color:var(--green)}
         .pn{font-weight:700;font-size:1.05rem;margin-bottom:.3rem}
         .pp{font-size:.85rem;color:var(--g500)}
+        .talk-embed{margin-top:.85rem;padding:.8rem .9rem;border:1px solid var(--g200);border-radius:10px;background:var(--g50)}
+        .talk-embed p{font-size:.82rem;color:var(--g600);margin-bottom:.45rem}
+        .talk-thumb{display:block;position:relative;margin-top:.85rem;border-radius:10px;overflow:hidden;border:1px solid var(--g200)}
+        .talk-thumb img{display:block;width:100%;height:auto}
+        .talk-thumb span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.78);color:var(--white);padding:.4rem .7rem;border-radius:999px;font-size:.78rem;font-weight:600}
 
         /* CTA */
         .cta{background:var(--black);color:var(--white);padding:6rem 2rem;text-align:center}
@@ -409,7 +414,7 @@ zorya /path/to/binary</div>
         <div class="pl">
             <div class="pi"><div><div class="pt">Zorya: Automated Concolic Execution of Single-Threaded Go Binaries</div><div class="pv">ACM SAC 2026 — 41st Symposium on Applied Computing, Thessaloniki</div><a class="pk" href="https://arxiv.org/abs/2512.10799" target="_blank">arXiv →</a></div><div class="py">2026</div></div>
             <div class="pi"><div><div class="pt">Concolic Execution Optimized for Go Binaries using Ghidra's P-Code</div><div class="pv">Springer — Software Engineering and Management: Theory and Applications</div><a class="pk" href="https://link.springer.com/chapter/10.1007/978-3-032-06658-9_10" target="_blank">Springer →</a></div><div class="py">2026</div></div>
-            <div class="pi"><div><div class="pt">Exposing Go's Hidden Bugs: A Novel Concolic Framework</div><div class="pv">SERA 2025 — IEEE/ACIS International Conference on Software Engineering</div><a class="pk" href="https://arxiv.org/abs/2505.20183" target="_blank">arXiv →</a></div><div class="py">2025</div></div>
+            <div class="pi"><div><div class="pt">Exposing Go's Hidden Bugs: A Novel Concolic Framework</div><div class="pv">SERA 2025 — IEEE/ACIS International Conference on Software Engineering</div><a class="pk" href="https://ieeexplore.ieee.org/document/11449147" target="_blank">IEEE Xplore →</a></div><div class="py">2025</div></div>
         </div>
     </div>
 </section>
@@ -419,10 +424,29 @@ zorya /path/to/binary</div>
         <div class="sl">Talks</div>
         <div class="st">Presentations</div>
         <div class="pg">
-            <div class="pc"><div class="pb pb-a">Arsenal</div><div class="pn">Black Hat Asia 2026</div><div class="pp">Singapore — Tool demonstration</div></div>
-            <div class="pc"><div class="pb pb-t">Talk</div><div class="pn">EthCC[8] 2025</div><div class="pp">Cannes — Blockchain client security</div></div>
+            <div class="pc">
+                <div class="pb pb-a">Arsenal</div>
+                <div class="pn">Black Hat Asia 2026</div>
+                <div class="pp">Singapore — Tool demonstration</div>
+                <div class="talk-embed">
+                    <p>Official Black Hat Arsenal session page with schedule details and project context.</p>
+                    <a class="pk" href="https://blackhat.com/asia-26/arsenal/schedule/?#zorya-go-binary-vulnerability-detection-with-concolic-execution-50425" target="_blank">Open event page →</a>
+                </div>
+            </div>
+            <div class="pc">
+                <div class="pb pb-t">Talk</div>
+                <div class="pn">EthCC[8] 2025</div>
+                <div class="pp">Cannes — Blockchain client security</div>
+                <div class="talk-embed">
+                    <p>Recorded conference talk:</p>
+                    <a class="pk" href="https://www.youtube.com/watch?v=QpcAtfN3B9M" target="_blank">Watch on YouTube →</a>
+                </div>
+                <a class="talk-thumb" href="https://www.youtube.com/watch?v=QpcAtfN3B9M" target="_blank">
+                    <img src="https://img.youtube.com/vi/QpcAtfN3B9M/hqdefault.jpg" alt="EthCC 2025 talk thumbnail">
+                    <span>Watch video</span>
+                </a>
+            </div>
             <div class="pc"><div class="pb pb-s">Seminar</div><div class="pn">Cybersecurity &amp; Defense Day</div><div class="pp">Institut Polytechnique de Paris</div></div>
-            <div class="pc"><div class="pb pb-s">Seminar</div><div class="pn">Seminar C4</div><div class="pp">Télécom SudParis</div></div>
         </div>
     </div>
 </section>
