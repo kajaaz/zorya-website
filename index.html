@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root{--black:#000;--white:#fff;--g50:#fafafa;--g100:#f5f5f5;--g200:#e5e5e5;--g300:#d4d4d4;--g400:#a3a3a3;--g500:#737373;--g600:#525252;--g700:#404040;--g800:#262626;--g900:#171717;--accent:#6d28d9;--accent-l:#8b5cf6;--accent-bg:#f5f0ff;--green:#16a34a;--red:#dc2626;--sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--mono:'IBM Plex Mono',monospace}
+        :root{--black:#000;--white:#fff;--g50:#fafafa;--g100:#f5f5f5;--g200:#e5e5e5;--g300:#d4d4d4;--g400:#a3a3a3;--g500:#737373;--g600:#525252;--g700:#404040;--g800:#262626;--g900:#171717;--accent:#ff6a00;--accent-l:#ff6a00;--accent-bg:#fff2e8;--green:#16a34a;--red:#dc2626;--sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--mono:'IBM Plex Mono',monospace}
         *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
         body{font-family:var(--sans);color:var(--black);background:var(--white);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
 
@@ -17,18 +17,27 @@
         nav{position:fixed;top:0;left:0;right:0;height:72px;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--g200);z-index:1000;display:flex;align-items:center;padding:0 clamp(1.5rem,4vw,4rem)}
         .nav-inner{max-width:1400px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between}
         .nav-brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--black)}
-        .nav-logo{width:28px;height:28px;border-radius:6px}
         .nav-wm{font-weight:800;font-size:1.15rem;letter-spacing:-.03em}
         .nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
         .nav-links a{text-decoration:none;color:var(--g600);font-size:.875rem;font-weight:500;transition:color .2s}
         .nav-links a:hover{color:var(--black)}
         .nav-cta{background:var(--black)!important;color:var(--white)!important;padding:.5rem 1.25rem;border-radius:100px;font-size:.875rem!important;font-weight:600!important;transition:opacity .2s}
         .nav-cta:hover{opacity:.85}
+        .nav-cta-volos{display:inline-flex;align-items:center;gap:.45rem}
+        .nav-cta-volos svg{width:14px;height:14px;fill:var(--accent);stroke:var(--accent);flex-shrink:0}
+        .nav-cta-github{display:inline-flex;align-items:center;gap:.45rem}
+        .nav-cta-github{background:var(--accent)!important;color:var(--black)!important}
+        .nav-cta-github svg{width:14px;height:14px;fill:var(--black);stroke:var(--black);flex-shrink:0}
         .nav-ham{display:none;background:none;border:none;cursor:pointer;padding:.5rem}
         .nav-ham svg{width:24px;height:24px}
 
         /* HERO */
         .hero{padding:10rem 2rem 5rem;text-align:center;max-width:900px;margin:0 auto}
+        .hero-logos{display:flex;justify-content:center;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+        .hero-logo{object-fit:contain;opacity:.95}
+        .hero-logo-zorya{height:72px}
+        .hero-logo-ledger{height:60px}
+        .hero-logo-telecom{height:62px}
         .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--g100);padding:.4rem 1rem;border-radius:100px;font-size:.8rem;font-weight:500;color:var(--g600);margin-bottom:2rem}
         .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
         .hero h1{font-size:clamp(2.8rem,6.5vw,4.5rem);font-weight:900;letter-spacing:-.04em;line-height:1.05;margin-bottom:1.5rem}
@@ -80,10 +89,50 @@
         /* DOCS */
         .dg{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
         .dc{display:flex;align-items:flex-start;gap:1rem;background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:1.5rem 1.8rem;text-decoration:none;color:var(--black);transition:border-color .2s,box-shadow .2s}
-        .dc:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(109,40,217,.08)}
+        .dc:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(255,106,0,.08)}
         .di{width:36px;height:36px;border-radius:8px;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
         .dc h3{font-size:.95rem;font-weight:700;margin-bottom:.2rem}
         .dc p{font-size:.82rem;color:var(--g500)}
+        .dc button{all:unset}
+        .doc-card-btn{display:flex;align-items:flex-start;gap:1rem;background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:1.5rem 1.8rem;text-decoration:none;color:var(--black);transition:border-color .2s,box-shadow .2s;width:100%;cursor:pointer;text-align:left}
+        .doc-card-btn:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(255,106,0,.08)}
+        .doc-card-btn.active{border-color:var(--accent);box-shadow:0 2px 12px rgba(255,106,0,.12)}
+        .doc-view{margin-top:2rem;background:var(--white);border:1px solid var(--g200);border-radius:16px;overflow:hidden}
+        .doc-view-bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--g200);background:var(--g50)}
+        .doc-view-title{font-weight:700;font-size:.9rem}
+        .doc-view-link{font-size:.82rem;color:var(--accent);text-decoration:none;font-weight:600}
+        .doc-view-link:hover{text-decoration:underline}
+        .doc-view-body{padding:1.5rem;min-height:280px}
+        .doc-view-state{font-size:.9rem;color:var(--g500)}
+        .md h1,.md h2,.md h3,.md h4{line-height:1.25;margin:1.3rem 0 .65rem}
+        .md h1{font-size:1.8rem}
+        .md h2{font-size:1.35rem}
+        .md h3{font-size:1.15rem}
+        .md p,.md ul,.md ol,.md blockquote{margin:.8rem 0}
+        .md code{font-family:var(--mono);font-size:.84em;background:var(--g100);padding:.1rem .35rem;border-radius:6px}
+        .md pre{background:var(--g900);color:var(--g100);padding:1rem;overflow:auto;border-radius:10px}
+        .md pre code{background:transparent;padding:0;color:inherit}
+        .md a{color:var(--accent)}
+        .md img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--g200);margin:.8rem 0}
+        .md table{border-collapse:collapse;width:100%;margin:1rem 0}
+        .md th,.md td{border:1px solid var(--g200);padding:.5rem .6rem;text-align:left}
+        .md blockquote{border-left:3px solid var(--g300);padding:.25rem 0 .25rem .9rem;color:var(--g600)}
+
+        /* COMPANION */
+        .volos-section{background:var(--black);color:var(--white)}
+        .volos-section .sl{color:var(--accent-l)}
+        .volos-section .st{color:var(--white)}
+        .volos-section .sd{color:#d4d4d4}
+        .comp{display:grid;grid-template-columns:1.4fr 1fr;gap:1.5rem;align-items:stretch}
+        .comp-main,.comp-side{background:#121212;border:1px solid #303030;border-radius:16px;padding:2rem}
+        .comp-main h3,.comp-side h3{font-size:1.2rem;margin-bottom:.8rem;color:var(--white)}
+        .comp-main p,.comp-side p{font-size:.92rem;color:#d4d4d4}
+        .comp-list{list-style:none;margin-top:1rem}
+        .comp-list li{font-size:.9rem;color:#ececec;margin-bottom:.5rem;padding-left:1.2rem;position:relative}
+        .comp-list li::before{content:'•';position:absolute;left:0;color:var(--accent);font-weight:700}
+        .comp-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.2rem}
+        .volos-section .btn-outline{background:transparent;color:var(--white);border-color:#4a4a4a}
+        .volos-section .btn-outline:hover{border-color:var(--accent)}
 
         /* INSTALL */
         .ic{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
@@ -133,8 +182,8 @@
         .fu.visible{opacity:1;transform:translateY(0)}
 
         /* RESPONSIVE */
-        @media(max-width:900px){.pipe{grid-template-columns:1fr}.pipe-s::after{display:none}.pipe-s{text-align:left;display:flex;align-items:center;gap:1rem;padding:1rem 0}.pipe-n{margin-bottom:0;flex-shrink:0}.ic{grid-template-columns:1fr}}
-        @media(max-width:768px){.nav-links{display:none}.nav-ham{display:block}.hero{padding:7rem 1.5rem 4rem}.pi{flex-direction:column;gap:.3rem}.foot{flex-direction:column}}
+        @media(max-width:900px){.pipe{grid-template-columns:1fr}.pipe-s::after{display:none}.pipe-s{text-align:left;display:flex;align-items:center;gap:1rem;padding:1rem 0}.pipe-n{margin-bottom:0;flex-shrink:0}.ic,.comp{grid-template-columns:1fr}}
+        @media(max-width:768px){.nav-links{display:none}.nav-ham{display:block}.hero{padding:7rem 1.5rem 4rem}.hero-logo-zorya{height:34px}.hero-logo-ledger{height:32px}.hero-logo-telecom{height:26px}.pi{flex-direction:column;gap:.3rem}.foot{flex-direction:column}}
     </style>
 </head>
 <body>
@@ -142,8 +191,7 @@
 <nav>
     <div class="nav-inner">
         <a href="#" class="nav-brand">
-            <img class="nav-logo" src="doc/zorya_logo.png" alt="Zorya" onerror="this.style.display='none'">
-            <span class="nav-wm">Zorya</span>
+            <span class="nav-wm">ZORYA</span>
         </a>
         <ul class="nav-links">
             <li><a href="#about">About</a></li>
@@ -151,7 +199,19 @@
             <li><a href="#docs">Docs</a></li>
             <li><a href="#publications">Research</a></li>
             <li><a href="#install">Install</a></li>
-            <li><a href="https://github.com/Ledger-Donjon/zorya" target="_blank" class="nav-cta">GitHub →</a></li>
+            <li>
+                <a href="#volos" class="nav-cta nav-cta-volos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1"/><path d="M8 9h8M8 13h5"/></svg>
+                    Zorya Volos
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/Ledger-Donjon/zorya" target="_blank" class="nav-cta nav-cta-github">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.42-1.305.762-1.604-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg>
+                    GitHub
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg>
+                </a>
+            </li>
         </ul>
         <button class="nav-ham" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -160,6 +220,11 @@
 </nav>
 
 <section class="hero fu">
+    <div class="hero-logos">
+        <img class="hero-logo hero-logo-zorya" src="doc/zorya_icon.png" alt="Zorya icon" onerror="this.style.display='none'">
+        <img class="hero-logo hero-logo-ledger" src="doc/ledger_donjon_vertical.png" alt="Ledger Donjon logo" onerror="this.style.display='none'">
+        <img class="hero-logo hero-logo-telecom" src="doc/TelecomParis.png" alt="Telecom Paris logo" onerror="this.style.display='none'">
+    </div>
     <div class="hero-badge"><span class="dot"></span> Open Source · Ledger Donjon × Télécom Paris</div>
     <h1>Automated vulnerability detection in Go&nbsp;binaries</h1>
     <p class="hero-sub">Zorya is a concolic execution engine built in Rust. It translates binaries to Ghidra's P-Code, drives symbolic exploration with Z3, and finds crashes in compiled Go programs — no source code required.</p>
@@ -214,9 +279,9 @@
         <div class="sd">Go binaries embed a heavyweight runtime that general-purpose symbolic executors don't model. Zorya was built from the ground up to handle it.</div>
         <div class="fg">
             <div class="fc"><div class="fi">🎯</div><h3>Panic-Guided Exploration</h3><p>Multi-layer filtering concentrates symbolic reasoning on panic-relevant paths, achieving 1.8–3.9× speedups by pruning 33–70% of irrelevant branches.</p></div>
-            <div class="fc"><div class="fi">🔒</div><h3>No Source Required</h3><p>Works directly on compiled, stripped binaries. Audit third-party dependencies, pre-built containers, or closed-source software.</p></div>
-            <div class="fc"><div class="fi">⚙️</div><h3>Three Detection Strategies</h3><p>S1 (flag-raising), S2 (symbolic panic invariant), and S3 (overlay path analysis) cover different vuln classes with tunable precision/recall.</p></div>
-            <div class="fc"><div class="fi">🧩</div><h3>P-Code IR</h3><p>Ghidra's intermediate representation abstracts ISA specifics. Analyze x86_64, ARM, or any Ghidra-supported architecture through one engine.</p></div>
+            <div class="fc"><div class="fi">🔒</div><h3>Built for Binaries Analysis</h3><p>Zorya analyzes executables with symbols to help developers find bugs in the binaries they build before production deployment.</p></div>
+            <div class="fc"><div class="fi">⚙️</div><h3>Detection Strategies</h3><p>Zorya discovers bugs in two complementary ways: runtime panic-function checks and de facto bug discovery through overlay concolic execution on alternative paths.</p></div>
+            <div class="fc"><div class="fi">🧩</div><h3>P-Code as the Intermediate Representation</h3><p>Ghidra's intermediate representation abstracts ISA specifics. Analyze x86_64, ARM, or any Ghidra-supported architecture through one engine.</p></div>
             <div class="fc"><div class="fi">🔬</div><h3>Real-World Validated</h3><p>Tested against go-ethereum (Geth), Kubernetes, Gin framework, Omni Network, and known CVEs including CVE-2022-30631.</p></div>
             <div class="fc"><div class="fi">🚀</div><h3>Guided &amp; Fuzzer Modes</h3><p>Interactive guided mode for exploration, plus a fuzzer module for automated batch campaigns with JSON configs and timeout management.</p></div>
         </div>
@@ -240,18 +305,59 @@
 <section class="section section-alt" id="docs">
     <div class="si fu">
         <div class="sl">Documentation</div>
-        <div class="st">Learn Zorya</div>
-        <div class="sd">From first run to advanced analysis strategies — everything you need.</div>
+        <div class="st">Learn Zorya (auto-synced with GitHub)</div>
+        <div class="sd">Each page below is rendered directly from the main branch of the original repo. Every push updates this website automatically.</div>
         <div class="dg">
-            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Quickstart.md" target="_blank"><div class="di">⚡</div><div><h3>Quickstart</h3><p>Install Zorya and run your first analysis in minutes</p></div></a>
-            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Usage.md" target="_blank"><div class="di">📖</div><div><h3>Usage Guide</h3><p>Execution modes, flags, arguments, and output formats</p></div></a>
-            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Strategies.md" target="_blank"><div class="di">🎯</div><div><h3>Detection Strategies</h3><p>S1, S2, S3 — how each strategy detects different bug classes</p></div></a>
-            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Vulnerability-Detection.md" target="_blank"><div class="di">🛡️</div><div><h3>Vulnerability Detection</h3><p>Detailed coverage of detected vulnerability types</p></div></a>
-            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Go-Binary-Analysis.md" target="_blank"><div class="di">🔍</div><div><h3>Go Binary Analysis</h3><p>How Zorya handles Go's runtime, stack, and type system</p></div></a>
-            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Compiler-Aware-Strategies.md" target="_blank"><div class="di">🏗️</div><div><h3>Compiler-Aware Strategies</h3><p>TinyGo vs standard Go — analysis implications</p></div></a>
-            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Overlay-Path-Analysis.md" target="_blank"><div class="di">🔀</div><div><h3>Overlay Path Analysis</h3><p>Detecting bugs in concretely-not-taken paths (S3)</p></div></a>
-            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Multi-threading.md" target="_blank"><div class="di">🧵</div><div><h3>Multi-threading</h3><p>Goroutine analysis and the Volos concurrency companion</p></div></a>
-            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Fuzzer.md" target="_blank"><div class="di">🔄</div><div><h3>Fuzzer Module</h3><p>Batch campaigns with JSON configs and automated testing</p></div></a>
+            <button class="doc-card-btn" data-doc-title="Quickstart" data-doc-file="Quickstart.md"><div class="di">⚡</div><div><h3>Quickstart</h3><p>Install Zorya and run your first analysis in minutes</p></div></button>
+            <button class="doc-card-btn" data-doc-title="Usage Guide" data-doc-file="Usage.md"><div class="di">📖</div><div><h3>Usage Guide</h3><p>Execution modes, flags, arguments, and output formats</p></div></button>
+            <button class="doc-card-btn" data-doc-title="Detection Strategies" data-doc-file="Strategies.md"><div class="di">🎯</div><div><h3>Detection Strategies</h3><p>S1, S2, S3 — how each strategy detects different bug classes</p></div></button>
+            <button class="doc-card-btn" data-doc-title="Vulnerability Detection" data-doc-file="Vulnerability-Detection.md"><div class="di">🛡️</div><div><h3>Vulnerability Detection</h3><p>Detailed coverage of detected vulnerability types</p></div></button>
+            <button class="doc-card-btn" data-doc-title="Go Binary Analysis" data-doc-file="Go-Binary-Analysis.md"><div class="di">🔍</div><div><h3>Go Binary Analysis</h3><p>How Zorya handles Go's runtime, stack, and type system</p></div></button>
+            <button class="doc-card-btn" data-doc-title="Compiler-Aware Strategies" data-doc-file="Compiler-Aware-Strategies.md"><div class="di">🏗️</div><div><h3>Compiler-Aware Strategies</h3><p>TinyGo vs standard Go — analysis implications</p></div></button>
+            <button class="doc-card-btn" data-doc-title="Overlay Path Analysis" data-doc-file="Overlay-Path-Analysis.md"><div class="di">🔀</div><div><h3>Overlay Path Analysis</h3><p>Detecting bugs in concretely-not-taken paths (S3)</p></div></button>
+            <button class="doc-card-btn" data-doc-title="Multi-threading" data-doc-file="Multi-threading.md"><div class="di">🧵</div><div><h3>Multi-threading</h3><p>Goroutine analysis and the Volos concurrency companion</p></div></button>
+            <button class="doc-card-btn" data-doc-title="Fuzzer Module" data-doc-file="Fuzzer.md"><div class="di">🔄</div><div><h3>Fuzzer Module</h3><p>Batch campaigns with JSON configs and automated testing</p></div></button>
+        </div>
+        <div class="doc-view" id="doc-viewer">
+            <div class="doc-view-bar">
+                <div class="doc-view-title" id="doc-view-title">Loading documentation...</div>
+                <a class="doc-view-link" id="doc-view-link" href="https://github.com/Ledger-Donjon/zorya/tree/main/doc" target="_blank">Open in GitHub →</a>
+            </div>
+            <div class="doc-view-body md" id="doc-view-body">
+                <p class="doc-view-state">Fetching latest documentation from the repository...</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section volos-section" id="volos">
+    <div class="si fu">
+        <div class="sl">Companion Project</div>
+        <div class="st">Zorya-Volos for concurrency bug detection</div>
+        <div class="sd">zorya-volos extends the Zorya approach to target multi-threaded behaviors and concurrency vulnerabilities in Go binaries.</div>
+        <div class="comp">
+            <div class="comp-main">
+                <h3>Why Zorya-Volos?</h3>
+                <p>Concurrency bugs are often non-deterministic and difficult to trigger with regular fuzzing. Volos focuses on goroutine interactions and interleaving-sensitive failures.</p>
+                <ul class="comp-list">
+                    <li>Focused on race-condition-style and scheduling-dependent bug patterns</li>
+                    <li>Designed as a fork to keep compatibility with Zorya workflows</li>
+                    <li>Useful for deeper analysis of concurrent code paths</li>
+                </ul>
+                <div class="comp-actions">
+                    <a href="https://github.com/kmsec137/zorya-volos/tree/main" class="btn btn-dark" target="_blank">zorya-volos Repository →</a>
+                    <a href="https://github.com/kmsec137/zorya-volos/tree/main/doc" class="btn btn-outline" target="_blank">Volos Documentation</a>
+                </div>
+            </div>
+            <div class="comp-side">
+                <h3>Relationship with Zorya</h3>
+                <p>Use mainline Zorya for broad single-threaded vulnerability exploration, then pivot to Volos when concurrency-specific analysis is needed.</p>
+                <ul class="comp-list">
+                    <li>Main project: stable core analysis pipeline</li>
+                    <li>Fork project: concurrency-focused research track</li>
+                    <li>Both remain linked through shared architecture ideas</li>
+                </ul>
+            </div>
         </div>
     </div>
 </section>
@@ -346,9 +452,65 @@ zorya /path/to/binary</div>
     <div class="fbot">© 2026 Karolina Gorna — Ledger Donjon × Télécom Paris (LTCI, INFRES, C²)</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')})},{threshold:.1});
 document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+
+const DOC_REPO_BASE='https://raw.githubusercontent.com/Ledger-Donjon/zorya/main/doc/';
+const DOC_REPO_BLOB='https://github.com/Ledger-Donjon/zorya/blob/main/doc/';
+const REPO_RAW_BASE='https://raw.githubusercontent.com/Ledger-Donjon/zorya/main/';
+
+const docButtons=[...document.querySelectorAll('.doc-card-btn')];
+const docTitle=document.getElementById('doc-view-title');
+const docBody=document.getElementById('doc-view-body');
+const docLink=document.getElementById('doc-view-link');
+
+function absolutizePath(path, baseHref=REPO_RAW_BASE){
+    return new URL(path, baseHref).href;
+}
+
+function rewriteDocMarkdown(md,file){
+    const docRawBase=new URL(`doc/${file}`, REPO_RAW_BASE).href;
+    const docBlobBase=new URL(`doc/${file}`, 'https://github.com/Ledger-Donjon/zorya/blob/main/').href;
+    return md
+        .replace(/!\[([^\]]*)\]\((?!https?:\/\/|#|data:)([^)]+)\)/g,(m,alt,p)=>`![${alt}](${absolutizePath(p,docRawBase)})`)
+        .replace(/\[([^\]]+)\]\((?!https?:\/\/|#|mailto:)([^)]+)\)/g,(m,label,p)=>{
+            const clean=p.replace(/^\.?\//,'');
+            if(clean.endsWith('.md')) return `[${label}](${new URL(clean,docBlobBase).href})`;
+            return `[${label}](${absolutizePath(p,docRawBase)})`;
+        })
+        .replace(/(<img\b[^>]*\bsrc=["'])(?!https?:\/\/|data:|#)([^"']+)(["'][^>]*>)/gi,(m,start,src,end)=>`${start}${absolutizePath(src,docRawBase)}${end}`);
+}
+
+async function loadDoc(file,title,button){
+    docButtons.forEach(btn=>btn.classList.remove('active'));
+    if(button) button.classList.add('active');
+    docTitle.textContent=`${title} (live from main branch)`;
+    docBody.innerHTML='<p class="doc-view-state">Loading latest version from GitHub...</p>';
+    docLink.href=`${DOC_REPO_BLOB}${encodeURIComponent(file)}`;
+    try{
+        const res=await fetch(`${DOC_REPO_BASE}${encodeURIComponent(file)}`,{cache:'no-store'});
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        const markdown=await res.text();
+        const rendered=marked.parse(rewriteDocMarkdown(markdown,file));
+        docBody.innerHTML=rendered;
+        docBody.querySelectorAll('a').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer'});
+    }catch(err){
+        docBody.innerHTML='<p class="doc-view-state">Could not load this document from GitHub right now. Use "Open in GitHub" and retry in a few seconds.</p>';
+    }
+}
+
+docButtons.forEach(btn=>{
+    btn.addEventListener('click',()=>{
+        loadDoc(btn.dataset.docFile,btn.dataset.docTitle,btn);
+    });
+});
+
+if(docButtons.length){
+    const initial=docButtons[0];
+    loadDoc(initial.dataset.docFile,initial.dataset.docTitle,initial);
+}
 </script>
 </body>
 </html>
