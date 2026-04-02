@@ -109,7 +109,9 @@
         .md h1{font-size:1.8rem}
         .md h2{font-size:1.35rem}
         .md h3{font-size:1.15rem}
-        .md p,.md ul,.md ol,.md blockquote{margin:.8rem 0}
+        .md p,.md blockquote{margin:.8rem 0}
+        .md ul,.md ol{margin:.8rem 0 .8rem .35rem;padding-left:1.1rem}
+        .md li{margin:.25rem 0}
         .md code{font-family:var(--mono);font-size:.84em;background:var(--g100);padding:.1rem .35rem;border-radius:6px}
         .md pre{background:var(--g900);color:var(--g100);padding:1rem;overflow:auto;border-radius:10px}
         .md pre code{background:transparent;padding:0;color:inherit}
@@ -312,7 +314,6 @@
     <div class="si fu">
         <div class="sl">Documentation</div>
         <div class="st">Learn Zorya (auto-synced with GitHub)</div>
-        <div class="sd">Each page below is rendered directly from the main branch of the original repo. Every push updates this website automatically.</div>
         <div class="dg">
             <button class="doc-card-btn" data-doc-title="Quickstart" data-doc-file="Quickstart.md"><div class="di">⚡</div><div><h3>Quickstart</h3><p>Install Zorya and run your first analysis in minutes</p></div></button>
             <button class="doc-card-btn" data-doc-title="Usage Guide" data-doc-file="Usage.md"><div class="di">📖</div><div><h3>Usage Guide</h3><p>Execution modes, flags, arguments, and output formats</p></div></button>
