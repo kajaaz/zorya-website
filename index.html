@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zorya — Concolic Execution Engine for Go Binaries</title>
+    <meta name="description" content="Zorya is a Rust-based concolic execution engine using Ghidra's P-Code IR and Z3 for automated vulnerability detection in compiled Go binaries.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root{--black:#000;--white:#fff;--g50:#fafafa;--g100:#f5f5f5;--g200:#e5e5e5;--g300:#d4d4d4;--g400:#a3a3a3;--g500:#737373;--g600:#525252;--g700:#404040;--g800:#262626;--g900:#171717;--accent:#6d28d9;--accent-l:#8b5cf6;--accent-bg:#f5f0ff;--green:#16a34a;--red:#dc2626;--sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--mono:'IBM Plex Mono',monospace}
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+        body{font-family:var(--sans);color:var(--black);background:var(--white);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+        /* NAV */
+        nav{position:fixed;top:0;left:0;right:0;height:72px;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--g200);z-index:1000;display:flex;align-items:center;padding:0 clamp(1.5rem,4vw,4rem)}
+        .nav-inner{max-width:1400px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between}
+        .nav-brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--black)}
+        .nav-logo{width:28px;height:28px;border-radius:6px}
+        .nav-wm{font-weight:800;font-size:1.15rem;letter-spacing:-.03em}
+        .nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
+        .nav-links a{text-decoration:none;color:var(--g600);font-size:.875rem;font-weight:500;transition:color .2s}
+        .nav-links a:hover{color:var(--black)}
+        .nav-cta{background:var(--black)!important;color:var(--white)!important;padding:.5rem 1.25rem;border-radius:100px;font-size:.875rem!important;font-weight:600!important;transition:opacity .2s}
+        .nav-cta:hover{opacity:.85}
+        .nav-ham{display:none;background:none;border:none;cursor:pointer;padding:.5rem}
+        .nav-ham svg{width:24px;height:24px}
+
+        /* HERO */
+        .hero{padding:10rem 2rem 5rem;text-align:center;max-width:900px;margin:0 auto}
+        .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--g100);padding:.4rem 1rem;border-radius:100px;font-size:.8rem;font-weight:500;color:var(--g600);margin-bottom:2rem}
+        .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+        .hero h1{font-size:clamp(2.8rem,6.5vw,4.5rem);font-weight:900;letter-spacing:-.04em;line-height:1.05;margin-bottom:1.5rem}
+        .hero-sub{font-size:clamp(1.05rem,2vw,1.2rem);color:var(--g500);max-width:620px;margin:0 auto 2.5rem;line-height:1.65}
+        .hero-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+        .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.8rem;border-radius:100px;font-family:var(--sans);font-size:.95rem;font-weight:600;text-decoration:none;transition:all .2s;cursor:pointer;border:none}
+        .btn-dark{background:var(--black);color:var(--white)}.btn-dark:hover{opacity:.85}
+        .btn-outline{background:var(--white);color:var(--black);border:1.5px solid var(--g300)}.btn-outline:hover{border-color:var(--black)}
+        .btn svg{width:18px;height:18px}
+
+        /* TERMINAL */
+        .terminal-section{max-width:780px;margin:0 auto 6rem;padding:0 2rem}
+        .terminal{background:var(--g900);border-radius:12px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,.12)}
+        .terminal-bar{display:flex;align-items:center;gap:6px;padding:12px 16px;background:var(--g800)}
+        .td{width:10px;height:10px;border-radius:50%}.td-r{background:#ff5f57}.td-y{background:#febc2e}.td-g{background:#28c840}
+        .terminal-body{padding:1.5rem;font-family:var(--mono);font-size:.82rem;line-height:1.7;color:var(--g300);overflow-x:auto;white-space:pre}
+        .tg{color:#28c840}.tw{color:#fff}.tp{color:var(--accent-l)}.tc{color:var(--g500)}
+
+        /* SECTIONS */
+        .section{padding:6rem 2rem}.section-alt{background:var(--g50)}
+        .si{max-width:1200px;margin:0 auto}
+        .sl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:.75rem}
+        .st{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:1rem}
+        .sd{font-size:1.05rem;color:var(--g500);max-width:600px;line-height:1.6;margin-bottom:3rem}
+
+        /* PIPELINE */
+        .pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative}
+        .pipe-s{text-align:center;padding:2.5rem 1rem;position:relative}
+        .pipe-s:not(:last-child)::after{content:'→';position:absolute;right:-.6rem;top:2.8rem;font-size:1.2rem;color:var(--g400);z-index:1}
+        .pipe-n{width:44px;height:44px;border-radius:50%;background:var(--black);color:var(--white);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;margin-bottom:1rem}
+        .pipe-nm{font-weight:700;font-size:.95rem;margin-bottom:.3rem}
+        .pipe-d{font-size:.8rem;color:var(--g500)}
+
+        /* FEATURES */
+        .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem}
+        .fc{background:var(--white);border:1px solid var(--g200);border-radius:16px;padding:2.5rem;transition:border-color .2s,box-shadow .2s}
+        .fc:hover{border-color:var(--g300);box-shadow:0 4px 20px rgba(0,0,0,.04)}
+        .fi{width:44px;height:44px;border-radius:10px;background:var(--g100);display:flex;align-items:center;justify-content:center;margin-bottom:1.2rem;font-size:1.1rem}
+        .fc h3{font-size:1.1rem;font-weight:700;margin-bottom:.6rem}
+        .fc p{font-size:.9rem;color:var(--g500);line-height:1.6}
+
+        /* VULNS */
+        .vg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+        .vc{display:flex;align-items:flex-start;gap:1rem;background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:1.5rem}
+        .vb{flex-shrink:0;font-family:var(--mono);font-size:.7rem;font-weight:600;color:var(--red);background:#fef2f2;padding:.25rem .5rem;border-radius:6px;margin-top:.1rem}
+        .vn{font-weight:600;font-size:.95rem;margin-bottom:.2rem}
+        .vd{font-size:.82rem;color:var(--g500)}
+
+        /* DOCS */
+        .dg{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
+        .dc{display:flex;align-items:flex-start;gap:1rem;background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:1.5rem 1.8rem;text-decoration:none;color:var(--black);transition:border-color .2s,box-shadow .2s}
+        .dc:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(109,40,217,.08)}
+        .di{width:36px;height:36px;border-radius:8px;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
+        .dc h3{font-size:.95rem;font-weight:700;margin-bottom:.2rem}
+        .dc p{font-size:.82rem;color:var(--g500)}
+
+        /* INSTALL */
+        .ic{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+        .ib{background:var(--g900);border-radius:12px;overflow:hidden}
+        .il{padding:.8rem 1.2rem 0;font-family:var(--mono);font-size:.7rem;color:var(--g500);text-transform:uppercase;letter-spacing:.08em}
+        .ix{padding:.8rem 1.2rem 1rem;font-family:var(--mono);font-size:.82rem;color:var(--white);line-height:1.8;overflow-x:auto;white-space:pre}
+        .ix .c{color:var(--g500)}
+
+        /* PUBS */
+        .pl{display:flex;flex-direction:column}
+        .pi{display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;padding:1.5rem 0;border-bottom:1px solid var(--g200)}
+        .pi:first-child{border-top:1px solid var(--g200)}
+        .pt{font-weight:700;font-size:1rem;margin-bottom:.25rem}
+        .pv{font-size:.85rem;color:var(--g500)}
+        .py{font-family:var(--mono);font-size:.85rem;font-weight:600;color:var(--accent);white-space:nowrap;flex-shrink:0}
+        .pk{display:inline-flex;align-items:center;gap:.3rem;font-size:.82rem;font-weight:600;color:var(--accent);text-decoration:none;margin-top:.3rem}
+        .pk:hover{text-decoration:underline}
+
+        /* PRES */
+        .pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
+        .pc{border:1px solid var(--g200);border-radius:12px;padding:2rem;background:var(--white);transition:border-color .2s}
+        .pc:hover{border-color:var(--g400)}
+        .pb{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:100px;margin-bottom:.8rem}
+        .pb-a{background:#fef2f2;color:var(--red)}.pb-t{background:var(--accent-bg);color:var(--accent)}.pb-s{background:#f0fdf4;color:var(--green)}
+        .pn{font-weight:700;font-size:1.05rem;margin-bottom:.3rem}
+        .pp{font-size:.85rem;color:var(--g500)}
+
+        /* CTA */
+        .cta{background:var(--black);color:var(--white);padding:6rem 2rem;text-align:center}
+        .cta .sl{color:var(--accent-l)}.cta .st{color:var(--white);max-width:600px;margin:0 auto 1rem}
+        .cta .sd{color:var(--g400);margin:0 auto 2.5rem}
+        .btn-w{background:var(--white);color:var(--black)}.btn-w:hover{opacity:.9}
+        .btn-gw{background:transparent;color:var(--white);border:1.5px solid var(--g600)}.btn-gw:hover{border-color:var(--white)}
+
+        /* FOOTER */
+        footer{border-top:1px solid var(--g200);padding:3rem 2rem}
+        .foot{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:2rem}
+        .fb{font-weight:800;font-size:1.1rem;margin-bottom:.5rem}
+        .fs{font-size:.82rem;color:var(--g500);max-width:280px}
+        .fcol h4{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--g400);margin-bottom:.8rem}
+        .fcol a{display:block;font-size:.85rem;color:var(--g600);text-decoration:none;margin-bottom:.5rem;transition:color .2s}
+        .fcol a:hover{color:var(--black)}
+        .fbot{max-width:1200px;margin:2rem auto 0;padding-top:1.5rem;border-top:1px solid var(--g200);font-size:.78rem;color:var(--g400)}
+
+        /* ANIM */
+        .fu{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+        .fu.visible{opacity:1;transform:translateY(0)}
+
+        /* RESPONSIVE */
+        @media(max-width:900px){.pipe{grid-template-columns:1fr}.pipe-s::after{display:none}.pipe-s{text-align:left;display:flex;align-items:center;gap:1rem;padding:1rem 0}.pipe-n{margin-bottom:0;flex-shrink:0}.ic{grid-template-columns:1fr}}
+        @media(max-width:768px){.nav-links{display:none}.nav-ham{display:block}.hero{padding:7rem 1.5rem 4rem}.pi{flex-direction:column;gap:.3rem}.foot{flex-direction:column}}
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-inner">
+        <a href="#" class="nav-brand">
+            <img class="nav-logo" src="doc/zorya_logo.png" alt="Zorya" onerror="this.style.display='none'">
+            <span class="nav-wm">Zorya</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#docs">Docs</a></li>
+            <li><a href="#publications">Research</a></li>
+            <li><a href="#install">Install</a></li>
+            <li><a href="https://github.com/Ledger-Donjon/zorya" target="_blank" class="nav-cta">GitHub →</a></li>
+        </ul>
+        <button class="nav-ham" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+    </div>
+</nav>
+
+<section class="hero fu">
+    <div class="hero-badge"><span class="dot"></span> Open Source · Ledger Donjon × Télécom Paris</div>
+    <h1>Automated vulnerability detection in Go&nbsp;binaries</h1>
+    <p class="hero-sub">Zorya is a concolic execution engine built in Rust. It translates binaries to Ghidra's P-Code, drives symbolic exploration with Z3, and finds crashes in compiled Go programs — no source code required.</p>
+    <div class="hero-actions">
+        <a href="https://github.com/Ledger-Donjon/zorya" class="btn btn-dark" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.42-1.305.762-1.604-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg>
+            View on GitHub
+        </a>
+        <a href="#docs" class="btn btn-outline">Read the docs</a>
+    </div>
+</section>
+
+<div class="terminal-section fu">
+    <div class="terminal">
+        <div class="terminal-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div>
+        <div class="terminal-body"><span class="tg">$</span> <span class="tw">zorya /path/to/binary</span>
+
+<span class="tp">███████╗ ██████╗ ██████╗ ██╗   ██╗ █████╗
+╚══███╔╝██╔═══██╗██╔══██╗╚██╗ ██╔╝██╔══██╗
+  ███╔╝ ██║   ██║██████╔╝ ╚████╔╝ ███████║
+ ███╔╝  ██║   ██║██╔══██╗  ╚██╔╝  ██╔══██║
+███████╗╚██████╔╝██║  ██║   ██║   ██║  ██║
+╚══════╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝</span>
+<span class="tc">Next Generation Concolic Analysis</span>
+
+<span class="tw">What is the source language of the binary?</span>
+<span class="tc">› Go (TinyGo)
+  Go (Standard)
+  C / Other</span></div>
+    </div>
+</div>
+
+<section class="section" id="about">
+    <div class="si fu">
+        <div class="sl">How it works</div>
+        <div class="st">From binary to vulnerability report</div>
+        <div class="sd">Zorya generates CPU and memory dumps via GDB, lifts binary code to P-Code, then drives concolic execution with Z3 to synthesize inputs that trigger panics and crashes.</div>
+        <div class="pipe">
+            <div class="pipe-s"><div class="pipe-n">1</div><div><div class="pipe-nm">Go Binary</div><div class="pipe-d">ELF input, any arch</div></div></div>
+            <div class="pipe-s"><div class="pipe-n">2</div><div><div class="pipe-nm">GDB Dumps</div><div class="pipe-d">CPU registers + memory</div></div></div>
+            <div class="pipe-s"><div class="pipe-n">3</div><div><div class="pipe-nm">Ghidra Lift</div><div class="pipe-d">Raw P-Code IR</div></div></div>
+            <div class="pipe-s"><div class="pipe-n">4</div><div><div class="pipe-nm">Concolic Engine</div><div class="pipe-d">Rust + Z3 solver</div></div></div>
+            <div class="pipe-s"><div class="pipe-n">5</div><div><div class="pipe-nm">Report</div><div class="pipe-d">PoC inputs + traces</div></div></div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt" id="features">
+    <div class="si fu">
+        <div class="sl">Capabilities</div>
+        <div class="st">Engineered for Go's complexity</div>
+        <div class="sd">Go binaries embed a heavyweight runtime that general-purpose symbolic executors don't model. Zorya was built from the ground up to handle it.</div>
+        <div class="fg">
+            <div class="fc"><div class="fi">🎯</div><h3>Panic-Guided Exploration</h3><p>Multi-layer filtering concentrates symbolic reasoning on panic-relevant paths, achieving 1.8–3.9× speedups by pruning 33–70% of irrelevant branches.</p></div>
+            <div class="fc"><div class="fi">🔒</div><h3>No Source Required</h3><p>Works directly on compiled, stripped binaries. Audit third-party dependencies, pre-built containers, or closed-source software.</p></div>
+            <div class="fc"><div class="fi">⚙️</div><h3>Three Detection Strategies</h3><p>S1 (flag-raising), S2 (symbolic panic invariant), and S3 (overlay path analysis) cover different vuln classes with tunable precision/recall.</p></div>
+            <div class="fc"><div class="fi">🧩</div><h3>P-Code IR</h3><p>Ghidra's intermediate representation abstracts ISA specifics. Analyze x86_64, ARM, or any Ghidra-supported architecture through one engine.</p></div>
+            <div class="fc"><div class="fi">🔬</div><h3>Real-World Validated</h3><p>Tested against go-ethereum (Geth), Kubernetes, Gin framework, Omni Network, and known CVEs including CVE-2022-30631.</p></div>
+            <div class="fc"><div class="fi">🚀</div><h3>Guided &amp; Fuzzer Modes</h3><p>Interactive guided mode for exploration, plus a fuzzer module for automated batch campaigns with JSON configs and timeout management.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="si fu">
+        <div class="sl">Detection</div>
+        <div class="st">What Zorya finds</div>
+        <div class="sd">Logic-related bugs and language-specific vulnerabilities that traditional fuzzers and static analyzers miss.</div>
+        <div class="vg">
+            <div class="vc"><span class="vb">PANIC</span><div><div class="vn">Nil Pointer Dereference</div><div class="vd">Unchecked pointer access causing runtime panic</div></div></div>
+            <div class="vc"><span class="vb">PANIC</span><div><div class="vn">Index Out of Bounds</div><div class="vd">Array/slice access beyond allocated length</div></div></div>
+            <div class="vc"><span class="vb">LOGIC</span><div><div class="vn">Integer Overflow</div><div class="vd">Arithmetic overflow in unchecked operations</div></div></div>
+            <div class="vc"><span class="vb">REACH</span><div><div class="vn">Reachable Panic Paths</div><div class="vd">panic() calls reachable from external input</div></div></div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt" id="docs">
+    <div class="si fu">
+        <div class="sl">Documentation</div>
+        <div class="st">Learn Zorya</div>
+        <div class="sd">From first run to advanced analysis strategies — everything you need.</div>
+        <div class="dg">
+            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Quickstart.md" target="_blank"><div class="di">⚡</div><div><h3>Quickstart</h3><p>Install Zorya and run your first analysis in minutes</p></div></a>
+            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Usage.md" target="_blank"><div class="di">📖</div><div><h3>Usage Guide</h3><p>Execution modes, flags, arguments, and output formats</p></div></a>
+            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Strategies.md" target="_blank"><div class="di">🎯</div><div><h3>Detection Strategies</h3><p>S1, S2, S3 — how each strategy detects different bug classes</p></div></a>
+            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Vulnerability-Detection.md" target="_blank"><div class="di">🛡️</div><div><h3>Vulnerability Detection</h3><p>Detailed coverage of detected vulnerability types</p></div></a>
+            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Go-Binary-Analysis.md" target="_blank"><div class="di">🔍</div><div><h3>Go Binary Analysis</h3><p>How Zorya handles Go's runtime, stack, and type system</p></div></a>
+            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Compiler-Aware-Strategies.md" target="_blank"><div class="di">🏗️</div><div><h3>Compiler-Aware Strategies</h3><p>TinyGo vs standard Go — analysis implications</p></div></a>
+            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Overlay-Path-Analysis.md" target="_blank"><div class="di">🔀</div><div><h3>Overlay Path Analysis</h3><p>Detecting bugs in concretely-not-taken paths (S3)</p></div></a>
+            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Multi-threading.md" target="_blank"><div class="di">🧵</div><div><h3>Multi-threading</h3><p>Goroutine analysis and the Volos concurrency companion</p></div></a>
+            <a class="dc" href="https://github.com/Ledger-Donjon/zorya/blob/main/doc/Fuzzer.md" target="_blank"><div class="di">🔄</div><div><h3>Fuzzer Module</h3><p>Batch campaigns with JSON configs and automated testing</p></div></a>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="install">
+    <div class="si fu">
+        <div class="sl">Get Started</div>
+        <div class="st">Installation</div>
+        <div class="sd">Docker or build from source. Requires Rust, Go, Python, and Ghidra.</div>
+        <div class="ic">
+            <div class="ib">
+                <div class="il">Docker (recommended)</div>
+                <div class="ix">git clone --recursive \
+  https://github.com/Ledger-Donjon/zorya
+cd zorya
+docker build -t zorya:latest .
+
+<span class="c"># Run interactively</span>
+docker run -it --rm \
+  --security-opt seccomp=unconfined \
+  --cap-add=SYS_PTRACE \
+  -v $(pwd)/results:/opt/zorya/results \
+  zorya:latest</div>
+            </div>
+            <div class="ib">
+                <div class="il">From source</div>
+                <div class="ix">git clone --recursive \
+  https://github.com/Ledger-Donjon/zorya
+cd zorya
+
+<span class="c"># Setup Ghidra + Pyhidra</span>
+make ghidra-config
+
+<span class="c"># Build everything</span>
+make all
+
+<span class="c"># Run on a test binary</span>
+zorya /path/to/binary</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt" id="publications">
+    <div class="si fu">
+        <div class="sl">Research</div>
+        <div class="st">Publications</div>
+        <div class="sd">Zorya is developed as part of a CIFRE PhD thesis at Télécom Paris (LTCI) in collaboration with Ledger Donjon.</div>
+        <div class="pl">
+            <div class="pi"><div><div class="pt">Zorya: Automated Concolic Execution of Single-Threaded Go Binaries</div><div class="pv">ACM SAC 2026 — 41st Symposium on Applied Computing, Thessaloniki</div><a class="pk" href="https://arxiv.org/abs/2512.10799" target="_blank">arXiv →</a></div><div class="py">2026</div></div>
+            <div class="pi"><div><div class="pt">Concolic Execution Optimized for Go Binaries using Ghidra's P-Code</div><div class="pv">Springer — Software Engineering and Management: Theory and Applications</div><a class="pk" href="https://link.springer.com/chapter/10.1007/978-3-032-06658-9_10" target="_blank">Springer →</a></div><div class="py">2026</div></div>
+            <div class="pi"><div><div class="pt">Exposing Go's Hidden Bugs: A Novel Concolic Framework</div><div class="pv">SERA 2025 — IEEE/ACIS International Conference on Software Engineering</div><a class="pk" href="https://arxiv.org/abs/2505.20183" target="_blank">arXiv →</a></div><div class="py">2025</div></div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="si fu">
+        <div class="sl">Talks</div>
+        <div class="st">Presentations</div>
+        <div class="pg">
+            <div class="pc"><div class="pb pb-a">Arsenal</div><div class="pn">Black Hat Asia 2026</div><div class="pp">Singapore — Tool demonstration</div></div>
+            <div class="pc"><div class="pb pb-t">Talk</div><div class="pn">EthCC[8] 2025</div><div class="pp">Cannes — Blockchain client security</div></div>
+            <div class="pc"><div class="pb pb-s">Seminar</div><div class="pn">Cybersecurity &amp; Defense Day</div><div class="pp">Institut Polytechnique de Paris</div></div>
+            <div class="pc"><div class="pb pb-s">Seminar</div><div class="pn">Seminar C4</div><div class="pp">Télécom SudParis</div></div>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <div class="si fu">
+        <div class="sl">Open Source</div>
+        <div class="st">Start analyzing Go binaries today</div>
+        <div class="sd">Zorya is free, open source, and actively maintained. Contributions welcome.</div>
+        <div class="hero-actions">
+            <a href="https://github.com/Ledger-Donjon/zorya" class="btn btn-w" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.42-1.305.762-1.604-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg>
+                GitHub Repository
+            </a>
+            <a href="https://karolinagorna.net" class="btn btn-gw" target="_blank">karolinagorna.net →</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="foot">
+        <div><div class="fb">Zorya</div><div class="fs">A concolic execution engine for Go binary security analysis. Developed at Ledger Donjon and Télécom Paris.</div></div>
+        <div class="fcol"><h4>Project</h4><a href="https://github.com/Ledger-Donjon/zorya" target="_blank">GitHub</a><a href="https://github.com/Ledger-Donjon/zorya/issues" target="_blank">Issues</a><a href="https://github.com/Ledger-Donjon/logic_bombs_go" target="_blank">Test Corpus</a></div>
+        <div class="fcol"><h4>Research</h4><a href="https://arxiv.org/abs/2512.10799" target="_blank">arXiv</a><a href="https://scholar.google.com/citations?user=YOUR_ID" target="_blank">Google Scholar</a><a href="https://karolinagorna.net/index.php/publications/" target="_blank">All Publications</a></div>
+        <div class="fcol"><h4>Links</h4><a href="https://donjon.ledger.com" target="_blank">Ledger Donjon</a><a href="https://www.telecom-paris.fr" target="_blank">Télécom Paris</a><a href="https://karolinagorna.net" target="_blank">Karolina Gorna</a></div>
+    </div>
+    <div class="fbot">© 2026 Karolina Gorna — Ledger Donjon × Télécom Paris (LTCI, INFRES, C²)</div>
+</footer>
+
+<script>
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')})},{threshold:.1});
+document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
