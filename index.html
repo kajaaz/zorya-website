@@ -39,6 +39,8 @@
         .hero-logo-zorya{height:72px}
         .hero-logo-ledger{height:60px}
         .hero-logo-telecom{height:62px}
+        .hero-logo-link{display:flex;align-items:flex-end;text-decoration:none}
+        .hero-logo-kmsec{height:48px;width:auto;max-width:min(200px,42vw);object-fit:contain}
         .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--g100);padding:.4rem 1rem;border-radius:100px;font-size:.8rem;font-weight:500;color:var(--g600);margin-bottom:2rem}
         .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
         .hero h1{font-size:clamp(2.8rem,6.5vw,4.5rem);font-weight:900;letter-spacing:-.04em;line-height:1.05;margin-bottom:1.5rem}
@@ -191,7 +193,7 @@
 
         /* RESPONSIVE */
         @media(max-width:900px){.pipe{grid-template-columns:1fr}.pipe-s::after{display:none}.pipe-s{text-align:left;display:flex;align-items:center;gap:1rem;padding:1rem 0}.pipe-n{margin-bottom:0;flex-shrink:0}.ic,.comp{grid-template-columns:1fr}}
-        @media(max-width:768px){.nav-links{display:none}.nav-ham{display:block}.hero{padding:7rem 1.5rem 4rem}.hero-logo-zorya{height:34px}.hero-logo-ledger{height:32px}.hero-logo-telecom{height:26px}.pi{flex-direction:column;gap:.3rem}.foot{flex-direction:column}}
+        @media(max-width:768px){.nav-links{display:none}.nav-ham{display:block}.hero{padding:7rem 1.5rem 4rem}.hero-logo-zorya{height:34px}.hero-logo-ledger{height:32px}.hero-logo-telecom{height:26px}.hero-logo-kmsec{height:24px;max-width:140px}.pi{flex-direction:column;gap:.3rem}.foot{flex-direction:column}}
     </style>
 </head>
 <body>
@@ -232,8 +234,11 @@
         <img class="hero-logo hero-logo-zorya" src="doc/zorya_icon.png" alt="Zorya icon" onerror="this.style.display='none'">
         <img class="hero-logo hero-logo-ledger" src="doc/ledger_donjon_vertical.png" alt="Ledger Donjon logo" onerror="this.style.display='none'">
         <img class="hero-logo hero-logo-telecom" src="doc/TelecomParis.png" alt="Telecom Paris logo" onerror="this.style.display='none'">
+        <a href="https://kmsecurity.co.za/" class="hero-logo-link" target="_blank" rel="noopener noreferrer" aria-label="KMSEC">
+            <img class="hero-logo hero-logo-kmsec" src="doc/kmsec.svg" alt="KMSEC logo" onerror="this.style.display='none'">
+        </a>
     </div>
-    <div class="hero-badge"><span class="dot"></span> Open Source · Ledger Donjon × Télécom Paris</div>
+    <div class="hero-badge"><span class="dot"></span> Open Source · Ledger Donjon × Télécom Paris × KMSEC (PTY) LTD</div>
     <h1>Automated vulnerability detection in Go&nbsp;binaries</h1>
     <p class="hero-sub">Zorya is a concolic execution engine built in Rust. It translates binaries to Ghidra's P-Code, drives symbolic exploration with Z3, and finds crashes in compiled Go programs — no source code required.</p>
     <div class="hero-actions">
@@ -470,12 +475,12 @@ zorya /path/to/binary</div>
 
 <footer>
     <div class="foot">
-        <div><div class="fb">Zorya</div><div class="fs">A concolic execution engine for Go binary security analysis. Developed at Ledger Donjon and Télécom Paris.</div></div>
+        <div><div class="fb">Zorya</div><div class="fs">A concolic execution engine for Go binary security analysis. Developed at Ledger Donjon, Télécom Paris, and KMSEC.</div></div>
         <div class="fcol"><h4>Project</h4><a href="https://github.com/Ledger-Donjon/zorya" target="_blank">GitHub</a><a href="https://github.com/Ledger-Donjon/zorya/issues" target="_blank">Issues</a><a href="https://github.com/Ledger-Donjon/logic_bombs_go" target="_blank">Test Corpus</a></div>
         <div class="fcol"><h4>Research</h4><a href="https://arxiv.org/abs/2512.10799" target="_blank">arXiv</a><a href="https://scholar.google.com/citations?user=YOUR_ID" target="_blank">Google Scholar</a><a href="https://karolinagorna.net/index.php/articles/" target="_blank">All Publications</a></div>
-        <div class="fcol"><h4>Links</h4><a href="https://donjon.ledger.com" target="_blank">Ledger Donjon</a><a href="https://www.telecom-paris.fr" target="_blank">Télécom Paris</a><a href="https://karolinagorna.net" target="_blank">Karolina Gorna</a></div>
+        <div class="fcol"><h4>Links</h4><a href="https://donjon.ledger.com" target="_blank">Ledger Donjon</a><a href="https://www.telecom-paris.fr" target="_blank">Télécom Paris</a><a href="https://kmsecurity.co.za/" target="_blank">KMSEC</a><a href="https://karolinagorna.net" target="_blank">Karolina Gorna</a></div>
     </div>
-    <div class="fbot">© 2026 Karolina Gorna — Ledger Donjon × Télécom Paris (LTCI, INFRES, C²)</div>
+    <div class="fbot">© 2026 Karolina Gorna — Ledger Donjon × Télécom Paris × KMSEC (PTY) LTD</div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
