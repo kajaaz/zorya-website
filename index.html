@@ -91,13 +91,19 @@
 
         /* VULNS — findings ledger */
         .vg{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid #2a2825}
-        .vc{display:grid;grid-template-columns:120px 1fr;gap:1.5rem;align-items:baseline;padding:1.35rem 0 1.35rem;border-bottom:1px solid #2a2825;transition:padding-left .2s,background .2s}
+        .vc{display:grid;grid-template-columns:92px 1fr minmax(230px,270px);gap:1.5rem;align-items:center;padding:1.35rem 0;border-bottom:1px solid #2a2825;transition:padding-left .2s,background .2s}
         .vc:hover{padding-left:1rem;background:linear-gradient(90deg,rgba(255,90,0,.08),transparent 60%)}
-        .vb{font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:.08em;color:var(--accent)}
+        .vb{font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:.08em;color:var(--accent);align-self:center}
         .vn{font-family:var(--display);font-weight:600;font-size:1.08rem;color:#fff;margin-bottom:.15rem}
-        .vc:hover .vn{color:var(--accent)}
         .vd{font-size:.88rem;color:#a8a49a}
-        @media(max-width:600px){.vc{grid-template-columns:1fr;gap:.35rem}}
+        .va{justify-self:end;text-align:right;display:block;text-decoration:none;font-family:var(--mono);border:1px solid #2a2825;border-radius:3px;padding:.55rem .75rem;transition:border-color .2s,background .2s;max-width:100%}
+        .va b{display:block;font-family:var(--sans);font-size:.72rem;font-weight:600;color:#fff;margin-bottom:.25rem;letter-spacing:.01em}
+        .va .p{font-size:.72rem;color:var(--accent);word-break:break-word;line-height:1.35}
+        .va .p::after{content:' \2197';color:#a8a49a}
+        .va:hover{border-color:var(--accent);background:rgba(255,90,0,.07)}
+        .va:hover b{color:var(--accent)}
+        .va:hover .p::after{color:var(--accent)}
+        @media(max-width:820px){.vc{grid-template-columns:1fr;gap:.5rem;align-items:start}.va{justify-self:start;text-align:left}}
 
         /* DOCS */
         .dg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
@@ -276,15 +282,13 @@
     <div class="si fu">
         <div class="sl">How it works</div>
         <div class="st">From binary to vulnerability report</div>
-        <div class="sd" style="max-width:none">Zorya generates CPU and memory dumps via GDB, lifts binary code to P-Code, then drives concolic execution with Z3 to synthesize inputs that trigger panics and crashes.</div>
+        <div class="sd" style="max-width:none">Zorya captures a running binary at a breakpoint with GDB, recording CPU registers, memory regions, and per-thread state, then lifts the machine code to Ghidra's P-Code so a single Rust engine can execute any supported architecture. It drives that P-Code through concolic execution backed by the Z3 solver, tracking a symbolic view of memory and registers alongside the concrete run. At every conditional branch (CBRANCH) Zorya inspects the abstract syntax tree around the branch to locate reachable panic call sites, then forks an overlay concolic execution down the alternative path to expose de facto bugs and vulnerabilities that never appear on the nominal run. Detector plugins observe the whole execution over an event bus and contribute their own verdicts, and Zorya emits proof-of-concept inputs, execution traces, and findings for everything it reaches.</div>
 
         <figure class="overview-diagram">
             <img src="doc/zorya-overview-full.png"
-                 alt="Zorya architecture overview: a Go/C ELF binary is dumped with GDB (CPU registers + memory), lifted to Ghidra P-Code, then driven through the Rust concolic engine and Z3 solver, emitting proof-of-concept inputs, traces, and plugin findings."
+                 alt="Zorya architecture overview: a Go/C ELF binary is dumped with GDB (CPU registers + memory), lifted to Ghidra P-Code, then driven through the Rust concolic engine and Z3 solver, exploring panic call sites and overlay paths at each branch and emitting proof-of-concept inputs, traces, and plugin findings."
                  onerror="this.closest('.overview-diagram').style.display='none'">
-            <figcaption>
-                End to end: a <b>Go or C ELF binary</b> is captured at a breakpoint with <b>GDB</b> (CPU registers, memory regions, and per-thread state), lifted to <b>Ghidra P-Code</b>, then executed by the <b>Rust concolic engine</b> with the <b>Z3</b> solver. Detector <b>plugins</b> observe the run over the event bus, and Zorya emits <b>proof-of-concept inputs, execution traces, and findings</b>.
-            </figcaption>
+            <figcaption>The Zorya analysis pipeline, from ELF binary to proof-of-concept findings.</figcaption>
         </figure>
     </div>
 </section>
@@ -313,13 +317,12 @@
         <div class="st">What Zorya finds</div>
         <div class="sd">Logic-related bugs and language-specific vulnerabilities that traditional fuzzers and static analyzers miss.</div>
         <div class="vg">
-            <div class="vc"><span class="vb">PANIC</span><div><div class="vn">Nil Pointer Dereference</div><div class="vd">Unchecked pointer access causing runtime panic</div></div></div>
-            <div class="vc"><span class="vb">PANIC</span><div><div class="vn">Index Out of Bounds</div><div class="vd">Array/slice access beyond allocated length</div></div></div>
-            <div class="vc"><span class="vb">LOGIC</span><div><div class="vn">Integer Overflow</div><div class="vd">Arithmetic overflow in unchecked operations</div></div></div>
-            <div class="vc"><span class="vb">REACH</span><div><div class="vn">Reachable Panic Paths</div><div class="vd">panic() calls reachable from external input</div></div></div>
-            <div class="vc"><span class="vb">RACE</span><div><div class="vn">Data Races</div><div class="vd">Concurrent unsynchronized access across goroutines, with the triggering input class</div></div></div>
-            <div class="vc"><span class="vb">RACE</span><div><div class="vn">TOCTOU</div><div class="vd">Check-use race windows (e.g. SO_PEERCRED then /proc/&lt;pid&gt;/exe)</div></div></div>
-            <div class="vc"><span class="vb">PANIC</span><div><div class="vn">Send on Closed Channel</div><div class="vd">Channel send after close: an unrecoverable Go runtime panic</div></div></div>
+            <div class="vc"><span class="vb">PANIC</span><div><div class="vn">Nil Pointer Dereference</div><div class="vd">Unchecked pointer access causing runtime panic</div></div><a class="va" href="https://github.com/Ledger-Donjon/zorya/tree/main/tests/programs/crashme-go" target="_blank" rel="noopener"><b>Test Zorya on this finding</b><span class="p">tests/programs/crashme-go</span></a></div>
+            <div class="vc"><span class="vb">PANIC</span><div><div class="vn">Index Out of Bounds</div><div class="vd">Array/slice access beyond allocated length</div></div><a class="va" href="https://github.com/Ledger-Donjon/zorya/tree/main/tests/programs/panic-index" target="_blank" rel="noopener"><b>Test Zorya on this finding</b><span class="p">tests/programs/panic-index</span></a></div>
+            <div class="vc"><span class="vb">LOGIC</span><div><div class="vn">Integer Overflow</div><div class="vd">Arithmetic overflow in unchecked operations</div></div><a class="va" href="https://github.com/Ledger-Donjon/logic_bombs_go/tree/main/go-compiler/real-world/evm-gascost-2017" target="_blank" rel="noopener"><b>Test Zorya on this finding</b><span class="p">logic_bombs_go: evm-gascost-2017</span></a></div>
+            <div class="vc"><span class="vb">RACE</span><div><div class="vn">Data Races</div><div class="vd">Concurrent unsynchronized access across goroutines, with the triggering input class</div></div><a class="va" href="https://github.com/Ledger-Donjon/zorya/tree/main/tests/programs/race-counter" target="_blank" rel="noopener"><b>Test Zorya on this finding</b><span class="p">tests/programs/race-counter</span></a></div>
+            <div class="vc"><span class="vb">RACE</span><div><div class="vn">TOCTOU</div><div class="vd">Check-use race windows (e.g. SO_PEERCRED then /proc/&lt;pid&gt;/exe)</div></div><a class="va" href="https://github.com/Ledger-Donjon/zorya/tree/main/tests/programs/toctou-test2-with-input" target="_blank" rel="noopener"><b>Test Zorya on this finding</b><span class="p">tests/programs/toctou-test2-with-input</span></a></div>
+            <div class="vc"><span class="vb">PANIC</span><div><div class="vn">Send on Closed Channel</div><div class="vd">Channel send after close: an unrecoverable Go runtime panic</div></div><a class="va" href="https://github.com/Ledger-Donjon/zorya/tree/main/tests/programs/panic-send-closed-channel" target="_blank" rel="noopener"><b>Test Zorya on this finding</b><span class="p">tests/programs/panic-send-closed-channel</span></a></div>
         </div>
     </div>
 </section>
@@ -431,6 +434,7 @@ zorya /path/to/binary</div>
         <div class="st">Publications</div>
         <div class="sd">Zorya is developed as part of a CIFRE PhD thesis at Télécom Paris (LTCI) in collaboration with Ledger Donjon.</div>
         <div class="pl">
+            <div class="pi"><div><div class="pt">From TinyGo to gc Compiler: Extending Zorya's Concolic Framework to Real-World Go Binaries</div><div class="pv">ACM EASE 2026, International Conference on Evaluation and Assessment in Software Engineering</div><a class="pk" href="https://arxiv.org/abs/2605.03492" target="_blank">arXiv →</a></div><div class="py">2026</div></div>
             <div class="pi"><div><div class="pt">Zorya: Automated Concolic Execution of Single-Threaded Go Binaries</div><div class="pv">ACM SAC 2026, 41st Symposium on Applied Computing, Thessaloniki</div><a class="pk" href="https://arxiv.org/abs/2512.10799" target="_blank">arXiv →</a></div><div class="py">2026</div></div>
             <div class="pi"><div><div class="pt">Concolic Execution Optimized for Go Binaries using Ghidra's P-Code</div><div class="pv">Springer, Software Engineering and Management: Theory and Applications</div><a class="pk" href="https://link.springer.com/chapter/10.1007/978-3-032-06658-9_10" target="_blank">Springer →</a></div><div class="py">2026</div></div>
             <div class="pi"><div><div class="pt">Exposing Go's Hidden Bugs: A Novel Concolic Framework</div><div class="pv">SERA 2025, IEEE/ACIS International Conference on Software Engineering</div><a class="pk" href="https://ieeexplore.ieee.org/document/11449147" target="_blank">IEEE Xplore →</a></div><div class="py">2025</div></div>
